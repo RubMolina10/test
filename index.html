@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumir API Rest</title>
+</head>
+<body>
+    <button onclick="mostrar()">Mostrar</button>
+    <p id="datos"></p>
+
+    <h1>Formuario</h1>
+    <!-- <form action="">
+        <input type="text" id="nombre" placeholder="Ingrese el nombre">
+        <input type="email" id="email" placeholder="Ingrese el coreo electrónico">
+        <button type="submit">Guardar</button>
+    </form> -->
+
+    <form>
+
+        <label for="name">Nombre</label>
+        <input type="text" name="nombre" id="nombre" />
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" />
+
+        <button type="submit">Submit</button>
+    </form>
+
+
+
+    <script>
+        function mostrar(){
+            limpiar()
+            let contenido = document.querySelector('#datos')
+            fetch('http://localhost:3000/Empleados')
+                .then(res => res.json())
+                .then(datos=>{
+                    console.log(datos)
+                    for (const valor of datos) {
+                        contenido.innerHTML +=  `${valor.nombre} <br>`
+                        //contenido.innerHTML +=  `${valor.nombre}  <br>`
+                    }
+                })
+        }
+
+        function limpiar(){
+            let contenido = document.querySelector('#datos')
+            contenido.innerHTML='   '
+        }
+
+
+        //1 Esto es tomar los datos del formuario
+        const form = document.querySelector('form');
+        form.addEventListener('submit', handleSubmit);
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            const data = new FormData(event.target);
+            guardar( Object.fromEntries(data.entries()))
+        }
+
+
+        
+        function guardar(value){
+            (async () => {
+
+                const rawResponse = await fetch('http://localhost:3000/Empleados', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(value)
+                });
+                const content = await rawResponse.json();
+                //alert("guardado")
+                mostrar();
+                console.log(content);
+            })();
+
+            // (async ()=>{
+            //     const respuesta = await fetch('http://localhost:3000/estudiantes', {
+            //         method='POST',
+            //         headers:{
+            //             'Accept': 'application/json',
+            //             'Content-Type': 'application/json'
+            //         },
+            //         body: JSON.stringify(value)
+            //     });
+            //     const contenido =  await respuesta.json();
+            //     console.log(contenido);
+            // })();
+        }
+    </script>
+</body>
+</html>
